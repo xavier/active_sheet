@@ -1,0 +1,5 @@
+firstname,lastname,date of birth,height,weight
+John,Doe,"1985-08-01",178,85.4
+Jane,Foo-Bar,"","",61.2
+,,,,
+Last,One,"2000-01-01",100,100

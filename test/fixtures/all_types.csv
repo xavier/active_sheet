@@ -1,0 +1,2 @@
+string,integer,decimal,float,date,time,datetime
+"Hello","123","123.456","123.456","2009-09-01","3pm","2009-09-01 12:34"

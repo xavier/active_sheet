@@ -1,0 +1,125 @@
+
+= ActiveSheet
+
+Spreadsheets. You hate them. Your customers love them. 
+
+Most customer projects involve one or more of those tedious "just import data from a spreadsheet" tasks.
+Those not-so-quick-but-surely-dirty scripts always end up being clunky and full of kludges.
+
+juggling with arrays, hashes, skipping rows and cleaning up all that garbage thrown at you in order to make it fit in your bulletproof model chock-full of well tested validations.
+
+
+
+ActiveSheet is a Ruby DSL to help
+
+Just like Active Record, it maps each row of the spreadsheet file to an object.  It supports both auto-discovery or explicit declarations of the columns declarative
+
+== Usage
+
+=== Column Mapping
+
+ActiveSheet requires the mapping of the spreadsheet columns to attribute names.
+
+  class Person < ActiveSheet::Row
+
+    # Will skip the first row in the file
+    skip_header
+    
+    # String by default
+    columns :firstname, :lastname, :date_of_birth, :height, :weight
+    
+  end
+
+  people = Person.load('/path/to/people.csv')
+  people.first
+  # => #<Person:0x384898 @date_of_birth="1985-08-01", @lastname="Doe", @weight="85.4", @firstname="John", @height="178", @line_number=1>
+  people.first.firstname
+  # => "John"
+  people.first.height
+  # => "178" # String
+
+You can also declare one column at a time, and provide a target type.  ActiveSheet will take care of the conversions for you.
+   
+  class Person < ActiveSheet::Row
+
+    column [:firstname, :lastname], :string
+    column :date_of_birth, :date
+    column :height, :integer
+    column :weight, :float
+
+  end
+
+  people = Person.load('/path/to/people.csv')
+  people.first
+  # #<Person2:0x383754 @date_of_birth=#<Date: 4892557/2,0,2299161>, @lastname="Doe", @weight=85.4, @firstname="John", @height=178, @line_number=1>
+  people.first.firstname
+  # => "John"
+  people.first.height
+  # => 178 # Fixnum
+
+=== Column Autodiscovery
+
+ActiveSheet supports column autodiscovery.  It will read the first row to read the column headers and transform each label into a symbol.
+By default, all values will be returned as strings which is not that useful.  You can provide some hints to help ActiveSheet to set the right type or give the column a better name:
+
+
+  class Person < ActiveSheet::Row
+  
+    discover_columns "Lastname" => :surname,                    # Will map column heading "lastname" to :surname
+                     "date of birth" => [:birthdate, :date],    # "date of birth" will be named :birthdate and converted into a Date
+                     :height => :integer                        # Type hint
+                     :weight => :float                          # Type hint
+
+  end
+
+=== Dealing With Garbage
+
+Most spreadsheets are authored by humans and most of them suck at sticking to conventions.
+
+ActiveSheet allows you to customize the definition of a blank cell, people are very creative when it comes to expressing void.  You can customize this either with a regular expression or a block
+
+  class Person < ActiveSheet::Row
+
+	# Cells containing "xxxxx" or "-" are empty
+    blank_cell /^xx+|\-$/
+    
+  end
+
+  class Person < ActiveSheet::Row
+
+	# Cells containing "xxxxx" or "-" are empty
+    blank_cell do |s|
+      (s.size == 0) || (s == "N/A")
+    end
+    
+  end
+
+You may also find yourself cleaning up cell contents to be able to convert it to some usable format, ActiveSheet also comes in handy:
+
+  class Payment < ActiveSheet::Row
+    
+    discover_columns :money_us => :decimal, :money_eur => :decimal
+    
+    blank_cell %r{^(\#+|\-)$}
+    
+    # "1,000,000.00 USD"
+    sanitize :money_us do |s| s.gsub(/[^\d\.]/, '') end
+    
+    # "EUR 2.000.000,00"
+    sanitize :money_eur do |s| s.gsub(/[^\d,]/, '').tr(',', '.') end
+    
+  end
+  
+=== Skipping Rows
+
+In addition to <tt>skip_header</tt>, you can also declare when to start/stop processing the file
+
+  class Person < ActiveSheet::Row
+
+    discover_columns
+  
+    start_at_row   5
+    stop_after_row 180
+    
+  end
+  
