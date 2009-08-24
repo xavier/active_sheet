@@ -13,6 +13,12 @@ rescue LoadError
 end
 
 module ActiveSheet
+
+  def self.available_parsers
+    result = []
+    ObjectSpace.each_object(Class) { |klass| result << klass if klass < ActiveSheet::AbstractParser }
+    result
+  end
   
   class AbstractParser
     
@@ -32,6 +38,7 @@ module ActiveSheet
   
   class CsvParser < AbstractParser
     
+    # Accepts options <tt>:field_separator</tt> and <tt>:row_separator</tt>
     def parse(data, options = {})
       fs = options[:field_separator]
       rs = options[:row_separator]
@@ -40,9 +47,11 @@ module ActiveSheet
     
   end
   
+  if Object.const_defined?("FasterCSV")
   
     class FasterCsvParser < AbstractParser
     
+      # Accepts options <tt>:field_separator</tt> and <tt>:row_separator</tt>
       def parse(data, options = {})
         opts = {}
         opts[:col_sep] = options[:field_separator] if options[:field_separator]
@@ -51,6 +60,10 @@ module ActiveSheet
       end
        
     end
+    
+  end # FasterCSV
+  
+  if Object.const_defined?("Spreadsheet") 
   
     class ExcelParser < AbstractParser
     
@@ -74,9 +87,11 @@ module ActiveSheet
        
     end
   
+  end # Spreadsheet
   
   class FixedWidthParser < AbstractParser
     
+    # Requires option <tt>:width</tt>, accepting an array of numbers specifying the width (in number of single byte characters) of each column
     def parse(data, options = {})
       raise ArgumentError.new("FixedWidthParser requires the option :widths") unless widths = options[:widths]
       rs = options[:row_separator] || "\n"
@@ -93,12 +108,6 @@ module ActiveSheet
       rows
     end
     
-  end
-  
-  def self.available_parsers
-    result = []
-    ObjectSpace.each_object(Class) { |klass| result << klass if klass < ActiveSheet::AbstractParser }
-    result
   end
   
 end

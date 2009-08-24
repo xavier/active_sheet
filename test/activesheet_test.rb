@@ -281,7 +281,7 @@ class ActiveSheetTest < Test::Unit::TestCase
   protected
   
   def assert_coldef(name, coltype, coldef)
-    assert_equal name, coldef.name, "Column definition name misamtch, expected '#{name}' and got '#{coldef.name}'"
+    assert_equal name, coldef.name, "Column definition name mismatch, expected '#{name}' and got '#{coldef.name}'"
     assert_equal coltype, coldef.class.name.split('::').last.gsub(/Column$/, '').downcase.to_sym
   end
   

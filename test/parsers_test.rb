@@ -43,37 +43,45 @@ class CsvParserTest < ParserTestBase
   
 end
 
-class FasterCsvParserTest < ParserTestBase
+if ActiveSheet.const_defined?('FasterCsvParser')
 
-  def setup
-    @parser = ActiveSheet::FasterCsvParser.new 
-  end
+  class FasterCsvParserTest < ParserTestBase
+
+    def setup
+      @parser = ActiveSheet::FasterCsvParser.new 
+    end
   
-  def test_load
-    assert_expected_result(@parser.load(fixture('parser_test_utf8')))
-  end
+    def test_load
+      assert_expected_result(@parser.load(fixture('parser_test_utf8')))
+    end
   
-  def test_parse
-    assert_expected_result(@parser.parse(fixture_data('parser_test_utf8')))
+    def test_parse
+      assert_expected_result(@parser.parse(fixture_data('parser_test_utf8')))
+    end
+
   end
 
-end
+end # FasterCsvParser
 
-class ExcelCsvParserTest < ParserTestBase
+if ActiveSheet.const_defined?('ExcelParser')
 
-  def setup
-    @parser = ActiveSheet::ExcelParser.new 
-  end
+  class ExcelCsvParserTest < ParserTestBase
+
+    def setup
+      @parser = ActiveSheet::ExcelParser.new 
+    end
   
-  def test_load
-    assert_expected_result(@parser.load(fixture('parser_test', :xls)))
-  end
+    def test_load
+      assert_expected_result(@parser.load(fixture('parser_test', :xls)))
+    end
   
-  def test_parse
-    assert_expected_result(@parser.parse(fixture_data('parser_test', :xls)))
+    def test_parse
+      assert_expected_result(@parser.parse(fixture_data('parser_test', :xls)))
+    end
+
   end
 
-end
+end # ExcelParser
 
 class FixedWidthParserTest < ParserTestBase
 
@@ -105,6 +113,3 @@ class FixedWidthParserTest < ParserTestBase
   
 
 end
-
-
-
