@@ -65,21 +65,21 @@ end # FasterCsvParser
 
 if ActiveSheet.const_defined?('ExcelParser')
 
-  class ExcelCsvParserTest < ParserTestBase
-
-    def setup
-      @parser = ActiveSheet::ExcelParser.new 
-    end
-  
-    def test_load
-      assert_expected_result(@parser.load(fixture('parser_test', :xls)))
-    end
-  
-    def test_parse
-      assert_expected_result(@parser.parse(fixture_data('parser_test', :xls)))
-    end
-
-  end
+  # class ExcelCsvParserTest < ParserTestBase
+  # 
+  #     def setup
+  #       @parser = ActiveSheet::ExcelParser.new 
+  #     end
+  #   
+  #     def test_load
+  #       assert_expected_result(@parser.load(fixture('parser_test', :xls)))
+  #     end
+  #   
+  #     def test_parse
+  #       assert_expected_result(@parser.parse(fixture_data('parser_test', :xls)))
+  #     end
+  # 
+  #   end
 
 end # ExcelParser
 

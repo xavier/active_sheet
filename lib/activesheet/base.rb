@@ -3,7 +3,7 @@ module ActiveSheet
     
   DEFAULT_TARGET_ENCODING = 'UTF-8'  
     
-  class Row
+  class Base
 
     attr_accessor :line_number
     

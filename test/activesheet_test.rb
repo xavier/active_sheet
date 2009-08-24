@@ -5,27 +5,27 @@ require File.join(File.dirname(__FILE__), 'test_helper')
 # Definitions
 #
 
-class NoDefinitions < ActiveSheet::Row
+class NoDefinitions < ActiveSheet::Base
 end
 
-class DefinitionsToBeReset < ActiveSheet::Row
+class DefinitionsToBeReset < ActiveSheet::Base
   columns :firstname, :lastname
 end
 
-class AllStringsColumns < ActiveSheet::Row
+class AllStringsColumns < ActiveSheet::Base
   
   columns :firstname, :lastname, :date_of_birth, :height, :weight
   
 end
 
-class ColumnsDefinedWithHash < ActiveSheet::Row
+class ColumnsDefinedWithHash < ActiveSheet::Base
   
   # Not working with Ruby 1.8.x
   columns :firstname => :string, :lastname => :string, :date_of_birth => :date, :height => :integer, :weight => :float
   
 end
 
-class ManualColumnDefinitionsWithoutHeader < ActiveSheet::Row
+class ManualColumnDefinitionsWithoutHeader < ActiveSheet::Base
   
   column [:firstname, :lastname], :string
   column :date_of_birth, :date
@@ -34,7 +34,7 @@ class ManualColumnDefinitionsWithoutHeader < ActiveSheet::Row
   
 end
 
-class ManualColumnDefinitionsWithSkipHeader < ActiveSheet::Row
+class ManualColumnDefinitionsWithSkipHeader < ActiveSheet::Base
   
   skip_header
   
@@ -45,7 +45,7 @@ class ManualColumnDefinitionsWithSkipHeader < ActiveSheet::Row
   
 end
 
-class ManualColumnDefinitionsWithStartAtLine < ActiveSheet::Row
+class ManualColumnDefinitionsWithStartAtLine < ActiveSheet::Base
   
   start_at_line 2
   
@@ -56,13 +56,13 @@ class ManualColumnDefinitionsWithStartAtLine < ActiveSheet::Row
   
 end
 
-class ColumnDiscovery < ActiveSheet::Row
+class ColumnDiscovery < ActiveSheet::Base
   
   discover_columns
   
 end
 
-class ColumnDiscoveryWithHints < ActiveSheet::Row
+class ColumnDiscoveryWithHints < ActiveSheet::Base
   
   discover_columns "lastname" => :surname,
                    "date of birth" => [:birthdate, :date],
@@ -71,7 +71,7 @@ class ColumnDiscoveryWithHints < ActiveSheet::Row
 
 end
 
-class GarbageProcessor < ActiveSheet::Row
+class GarbageProcessor < ActiveSheet::Base
   
   discover_columns :money1 => :decimal, :money2 => :decimal
   
@@ -85,7 +85,7 @@ class GarbageProcessor < ActiveSheet::Row
   
 end
 
-class GarbageProcessorWithBlankCellAsBlock < ActiveSheet::Row
+class GarbageProcessorWithBlankCellAsBlock < ActiveSheet::Base
   
   discover_columns
   
@@ -95,7 +95,7 @@ class GarbageProcessorWithBlankCellAsBlock < ActiveSheet::Row
   
 end
 
-class CharsetConversionWithDefaultTarget < ActiveSheet::Row
+class CharsetConversionWithDefaultTarget < ActiveSheet::Base
   
   columns :col1, :col2, :col3
   
@@ -103,7 +103,7 @@ class CharsetConversionWithDefaultTarget < ActiveSheet::Row
   
 end
 
-class CharsetConversionWithTarget < ActiveSheet::Row
+class CharsetConversionWithTarget < ActiveSheet::Base
   
   columns :col1, :col2, :col3
   
@@ -112,7 +112,7 @@ class CharsetConversionWithTarget < ActiveSheet::Row
   
 end
 
-class AllStringsColumnsWithFilters < ActiveSheet::Row
+class AllStringsColumnsWithFilters < ActiveSheet::Base
   
   columns :firstname, :lastname, :date_of_birth, :height, :weight
   
@@ -185,12 +185,12 @@ class ActiveSheetTest < Test::Unit::TestCase
   
   def test_column_name_inflection
     assert_raise(ActiveSheet::ColumnDefinitionError) {
-      ActiveSheet::Row.send(:string_to_column_symbol, "")
+      ActiveSheet::Base.send(:string_to_column_symbol, "")
     }
-    assert_equal :firstname,      ActiveSheet::Row.send(:string_to_column_symbol, "firstname")
-    assert_equal :middle_initial, ActiveSheet::Row.send(:string_to_column_symbol, "middle initial")
-    assert_equal :Pr_nom,         ActiveSheet::Row.send(:string_to_column_symbol, "PrÃ©nom")
-    assert_equal :_123_FOUR,      ActiveSheet::Row.send(:string_to_column_symbol, "123-FOUR")
+    assert_equal :firstname,      ActiveSheet::Base.send(:string_to_column_symbol, "firstname")
+    assert_equal :middle_initial, ActiveSheet::Base.send(:string_to_column_symbol, "middle initial")
+    assert_equal :Pr_nom,         ActiveSheet::Base.send(:string_to_column_symbol, "PrÃ©nom")
+    assert_equal :_123_FOUR,      ActiveSheet::Base.send(:string_to_column_symbol, "123-FOUR")
   end
   
   def test_record_initialization_with_autodiscovery

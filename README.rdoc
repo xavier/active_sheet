@@ -20,7 +20,7 @@ Just like Active Record, it maps each row of the spreadsheet file to an object. 
 
 ActiveSheet requires the mapping of the spreadsheet columns to attribute names.
 
-  class Person < ActiveSheet::Row
+  class Person < ActiveSheet::Base
 
     # Will skip the first row in the file
     skip_header
@@ -40,7 +40,7 @@ ActiveSheet requires the mapping of the spreadsheet columns to attribute names.
 
 You can also declare one column at a time, and provide a target type.  ActiveSheet will take care of the conversions for you.
    
-  class Person < ActiveSheet::Row
+  class Person < ActiveSheet::Base
 
     column [:firstname, :lastname], :string
     column :date_of_birth, :date
@@ -63,7 +63,7 @@ ActiveSheet supports column autodiscovery.  It will read the first row to read t
 By default, all values will be returned as strings which is not that useful.  You can provide some hints to help ActiveSheet to set the right type or give the column a better name:
 
 
-  class Person < ActiveSheet::Row
+  class Person < ActiveSheet::Base
   
     discover_columns "Lastname" => :surname,                    # Will map column heading "lastname" to :surname
                      "date of birth" => [:birthdate, :date],    # "date of birth" will be named :birthdate and converted into a Date
@@ -78,16 +78,16 @@ Most spreadsheets are authored by humans and most of them suck at sticking to co
 
 ActiveSheet allows you to customize the definition of a blank cell, people are very creative when it comes to expressing void.  You can customize this either with a regular expression or a block
 
-  class Person < ActiveSheet::Row
+  class Person < ActiveSheet::Base
 
-	# Cells containing "xxxxx" or "-" are empty
+    # Cells containing "xxxxx" or "-" are empty
     blank_cell /^xx+|\-$/
     
   end
 
-  class Person < ActiveSheet::Row
+  class Person < ActiveSheet::Base
 
-	# Cells containing "xxxxx" or "-" are empty
+    # Cells containing "xxxxx" or "-" are empty
     blank_cell do |s|
       (s.size == 0) || (s == "N/A")
     end
@@ -96,7 +96,7 @@ ActiveSheet allows you to customize the definition of a blank cell, people are v
 
 You may also find yourself cleaning up cell contents to be able to convert it to some usable format, ActiveSheet also comes in handy:
 
-  class Payment < ActiveSheet::Row
+  class Payment < ActiveSheet::Base
     
     discover_columns :money_us => :decimal, :money_eur => :decimal
     
@@ -114,7 +114,7 @@ You may also find yourself cleaning up cell contents to be able to convert it to
 
 In addition to <tt>skip_header</tt>, you can also declare when to start/stop processing the file
 
-  class Person < ActiveSheet::Row
+  class Person < ActiveSheet::Base
 
     discover_columns
   
