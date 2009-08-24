@@ -9,7 +9,7 @@ Those not-so-quick-but-surely-dirty scripts always end up being clunky and full 
 Enough juggling with arrays, hashes, counting indices and cleaning up all that garbage thrown at you in 
 order to make it fit in your bulletproof model chock-full of well tested validations.
 
-ActiveSheet is small a Ruby DSL to help you declaratively take care of the most boring part of the 
+ActiveSheet is a small a Ruby DSL to help you declaratively take care of the most boring part of the 
 processing.  It will parse, sanitize, filter your incoming data and present it back to you in clean objects which are so much pleasant to work with!
 
 Just like Active Record, it maps each row of the spreadsheet file to an object.  It supports both auto-discovery or explicit declarations of the columns.  Take a look at the examples below...
@@ -18,7 +18,7 @@ Just like Active Record, it maps each row of the spreadsheet file to an object. 
 
 === Column Mapping
 
-ActiveSheet requires the mapping of the spreadsheet columns to attribute names.
+ActiveSheet requires the mapping of the spreadsheet columns to attribute names.  You can do it manually in various way.
 
   class Person < ActiveSheet::Base
 
@@ -57,6 +57,18 @@ You can also declare one column at a time, and provide a target type.  ActiveShe
   people.first.height
   # => 178 # Fixnum
 
+=== Row Objects
+
+You can access the attributes of row objects but by accessor or using []:
+
+   person.firstname == person[:firstname]
+
+You can also get all the attributes in a hash, which can be convinient if you want to populate an ActiveRecord model for instance:
+
+   person.attributes # => {:firstname => "John", :lastname => "Doe", ...}
+
+An additional instance variable <tt>line_number</tt> is also set by the processor so you can keep track of the originating row in the source document.
+
 === Column Autodiscovery
 
 ActiveSheet supports column autodiscovery.  It will read the first row to read the column headers and transform each label into a symbol.
@@ -67,12 +79,10 @@ By default, all values will be returned as strings which is not that useful.  Yo
   
     discover_columns "Lastname" => :surname,                    # Will map column heading "lastname" to :surname
                      "date of birth" => [:birthdate, :date],    # "date of birth" will be named :birthdate and converted into a Date
-                     :height => :integer                        # Type hint
-                     :weight => :float                          # Type hint
+                     :height => :integer                        # Type hint for the inflected column name :height
+                     :weight => :float                          # Type hint for the inflected column name :weight
 
   end
-
-=== Parsing Contents
 
 === Dealing With Garbage
 

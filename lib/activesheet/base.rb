@@ -118,8 +118,8 @@ module ActiveSheet
       def select_parser(format)
         case format
         when :csv
-          # klass = const_define@?(FasterCsvParser) ? FasterCsvParser : CsvParser
-          CsvParser.new
+          klass = ActiveSheet.const_defined?("FasterCsvParser") ? FasterCsvParser : CsvParser
+          klass.new
         when :xls
           ExcelParser.new
         when :fixed
@@ -130,8 +130,8 @@ module ActiveSheet
       end
 
       # The format will be guessed from the filename extension (.csv or .xls), 
-      # you can also explicitly set the format using the :format option
-      # Options are passed to the parser
+      # you can also explicitly set the format using the :format option (see <tt>parse</tt> for the possible formats)
+      # Options are passed to the parser, CSV parsers accept <tt>:field_separator</tt> and <tt>:row_separator</tt>
       def load(filename, options = {})
         if options[:format] || (ext = File.extname(filename)).empty?
           format = options[:format]
@@ -143,6 +143,10 @@ module ActiveSheet
       end
       
       # Parse the given date as CSV, unless specified with the :format option.  Other options will be passed to the parser.
+      # Accepted formats are <tt>:csv</tt>, <tt>:xls</tt> or <tt>:fixed</tt>
+      # The <tt>:fixed</tt> format is for fixed width columns, you must provide a <tt>:widths</tt> with an array of number
+      # giving the size (in number of bytes) of every column.  This does not play well with UTF8 and UNICODE contents but if
+      # people send you content in fixed-width format, they are unlikely to know about multibyte character sets.
       def parse(data, options = {})
         format = options[:format] || :csv
         parser = select_parser(format)
