@@ -112,6 +112,19 @@ class CharsetConversionWithTarget < ActiveSheet::Row
   
 end
 
+class AllStringsColumnsWithFilters < ActiveSheet::Row
+  
+  columns :firstname, :lastname, :date_of_birth, :height, :weight
+  
+  filter_source_row do |source_row|
+    source_row[0] =~ /^J/i
+  end
+
+  filter_row do |row|
+    row.lastname !~ /^doe$/i
+  end
+  
+end
 
 
 #
@@ -276,6 +289,12 @@ class ActiveSheetTest < Test::Unit::TestCase
     assert_equal "Caractères", row.col1
     assert_nil   row.col2
     assert_equal "Spéciaux", row.col3
+  end
+  
+  def test_row_filters
+    rows = AllStringsColumnsWithFilters.load(fixture("no_header"))
+    assert_equal 1, rows.size
+    assert_equal "Jane", rows.first.firstname
   end
   
   protected

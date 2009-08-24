@@ -236,11 +236,11 @@ module ActiveSheet
             discover = false
           else
             # Filter on raw data
-            next if @filter_source_row && @filter_source_row.call(source_row)
+            next if @filter_source_row && !@filter_source_row.call(source_row)
             # Create object
             row = make_row(source_row)
             # Filter on processed object
-            next if @filter_row && @filter_row.call(row)
+            next if @filter_row && !@filter_row.call(row)
             result << row #unless skip_row?(row)
           end
         end
