@@ -66,3 +66,30 @@ class DateColumnTest < AbstractColumnTest
   
 end
 
+class TimeColumnTest < AbstractColumnTest
+
+  def test_value
+   t = @col.value("12:34")
+   assert_equal [12, 34], [t.hour, t.min]
+   t = @col.value("12:34:56")
+   assert_equal [12, 34, 56], [t.hour, t.min, t.sec]
+   t = @col.value("3PM")
+   assert_equal [15, 00, 00], [t.hour, t.min, t.sec]
+  end  
+  
+end
+
+class DatetimeColumnTest < AbstractColumnTest
+
+  def test_value
+    dt = @col.value("1985-08-01 12:34:56")
+    assert_equal 1985, dt.year
+    assert_equal 8, dt.month
+    assert_equal 1, dt.day
+    assert_equal 12, dt.hour
+    assert_equal 34, dt.min
+    assert_equal 56, dt.sec
+  end  
+  
+end
+

@@ -1,5 +1,6 @@
 
 require 'csv'
+require 'time'
 require 'date'
 require 'iconv'
 require 'bigdecimal'

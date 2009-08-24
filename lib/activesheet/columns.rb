@@ -76,7 +76,7 @@ module ActiveSheet
   class TimeColumn < AbstractColumn
     
     def value(s)
-      Time.strptime(s)
+      Time.parse(s)
     end
     
   end
