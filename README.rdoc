@@ -124,7 +124,7 @@ In addition to <tt>skip_header</tt>, you can also declare when to start/stop pro
     
   end
   
-== MIT Licence
+== MIT License
 
 Copyright (c) 2009 Xavier Defrang
 
