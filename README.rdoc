@@ -6,13 +6,14 @@ Spreadsheets. You hate them. Your customers love them.
 Most customer projects involve one or more of those tedious "just import data from a spreadsheet" tasks.
 Those not-so-quick-but-surely-dirty scripts always end up being clunky and full of kludges.
 
-juggling with arrays, hashes, skipping rows and cleaning up all that garbage thrown at you in order to make it fit in your bulletproof model chock-full of well tested validations.
+Enough juggling with arrays, hashes, counting indices and cleaning up all that garbage thrown at you in 
+order to make it fit in your bulletproof model chock-full of well tested validations.
 
+ActiveSheet is small a Ruby DSL to help you declaratively take care of the most boring part of the 
+processing.  It will parse, sanitize, filter your incoming data and present it back to you in clean
+ objects which are so much pleasant to work with!
 
-
-ActiveSheet is a Ruby DSL to help
-
-Just like Active Record, it maps each row of the spreadsheet file to an object.  It supports both auto-discovery or explicit declarations of the columns declarative
+Just like Active Record, it maps each row of the spreadsheet file to an object.  It supports both auto-discovery or explicit declarations of the columns.  Take a look at the examples below...
 
 == Usage
 
