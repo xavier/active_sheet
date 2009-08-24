@@ -12,12 +12,9 @@ module ActiveSheet
       attr_accessor :column_definitions
       attr_accessor :reverse_index
       
-      #
-      def reset_column_definitions
-        @column_definitions = nil
-      end
-      
-      #
+      # Declare one or more columns, they must be of course in the same order as they appear in the spreadsheet.
+      # Pass in a list of symbols to declare the columns with the defaul type <tt>:string</tt>
+      # You can also pass in an <b>ordered</b> hash of <tt>:column_name => type</tt> pairs
       def columns(*symbols)
         if symbols.size == 1 && symbols.first.is_a?(Hash)
           symbols.first.each do |name, column_type|
@@ -28,7 +25,8 @@ module ActiveSheet
         end
       end
 
-      #
+      # Declare one or more columns of a certain type (default <tt>:string</tt>).
+      # You can pass either one symbol or an array of symbols if you want to declare multiple columns in a row
       def column(symbols, column_type = :string, options = {})
         @column_definitions ||= []
         [symbols].flatten.each do |symbol|
@@ -37,38 +35,49 @@ module ActiveSheet
         end
       end
       
-      #
+      # Use the first row to be processed as column/attribute names
+      # Each column name will be inflected by replacing all non alphanumerical ASCII characters by underscores (and prepending an underscore if the name starts with a number). all columns content will be treated as strings.
+      # If you are not happy with the inflected column names or if you want to define the type of some columns, you can pass some hints.
+      # * <tt>"Foo" => :bar</tt> will tell the inflector to use :bar as attribute name for column "Foo"
+      # * <tt>"Foo" => [:bar, :integer]</tt> will tell the inflector to use :bar as attribute name for column "Foo" which will be treated as an :integer
+      # * <tt>:foo => :date</tt> will tell the inflector that the type of the inflected column name :foo is :date
+      # Supported types are: <tt>:string</tt> (default), <tt>:integer</tt>, <tt>:float</tt>, <tt>:decimal</tt>, <tt>:date</tt>, <tt>:time</tt>, <tt>:datetime</tt>
       def discover_columns(hints = {})
         @discover_columns = true
         process_hints(hints)
       end
       
-      # TODO
+      # Define the source charset (default: nil, no character encoding conversion will occur)
+      # If you do not define a target encoding with <tt>to_charset</tt>, it will default to UTF-8
       def from_charset(encoding)
         @source_encoding = encoding
       end
       
-      # TODO
+      # Define a target to convert the incoming data to (default: UTF-8)
+      # If you define a target encoding, you must define a source encoding
       def to_charset(encoding)
         @target_encoding = encoding
       end
       
-      #
+      # You cannot use this method along with <tt>start_at_line</tt>
       def skip_header
         start_at_line(2)
       end
       
-      #
+      # Start processing the file at the given line number (default: nil, process file from the first line)
+      # You cannot use this method along with <tt>skip_header</tt>
+      # If your model uses column autodiscovery, the first row processed will be treated as the header row.
       def start_at_line(number)
         @start_at_line = number
       end
       
-      #
+      # Stop processing the file after the given line number (default: nil, process file until the end)
       def stop_after_line(number)
         @stop_after_line = number
       end
       
-      #
+      # Extends the definition of a blank cell, either by providing a regular expression or a block
+      # If your blank cell condition is met, the corresponding attribute will be nil.
       def blank_cell(regexp = nil, &block)
         if block_given? 
           if regexp
@@ -86,20 +95,26 @@ module ActiveSheet
         end
       end
       
+      # Register a source row object filter.
+      # The block will be called with a an array of strings, as returned by the parser
       def filter_source_row(&block)
         @filter_source_row = block
       end
 
+      # Register a row object filter.
+      # The block will be called with an instance of your ActiveSheet::Base subclass
       def filter_row(&block)
         @filter_row = block
       end
       
-      #
+      # Declare a sanitizer block for the given column name.
+      # The processor will pass in a string to the sanitizer before performing any column type specific conversion.
       def sanitize(column_name, &block)
         @sanitizers ||= {}
         @sanitizers[column_name] = block
       end
       
+      # Returns an instance of parser for the given format.  Accepted formats are <tt>:csv</tt>, <tt>:xls</tt> or <tt>:fixed</tt>
       def select_parser(format)
         case format
         when :csv
@@ -114,7 +129,8 @@ module ActiveSheet
         end
       end
 
-      # The format will be guessed from the filename extension (.csv or .xls), you can also explicitly set the format using the :format option
+      # The format will be guessed from the filename extension (.csv or .xls), 
+      # you can also explicitly set the format using the :format option
       # Options are passed to the parser
       def load(filename, options = {})
         if options[:format] || (ext = File.extname(filename)).empty?
@@ -126,7 +142,7 @@ module ActiveSheet
         process(parser.load(filename, options))
       end
       
-      # Options are passed to the parser
+      # Parse the given date as CSV, unless specified with the :format option.  Other options will be passed to the parser.
       def parse(data, options = {})
         format = options[:format] || :csv
         parser = select_parser(format)
@@ -138,6 +154,11 @@ module ActiveSheet
       # end
       
       protected
+      
+      #
+      def reset_column_definitions
+        @column_definitions = nil
+      end
       
       def process_hints(hints)
         @name_hints = {}

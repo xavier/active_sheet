@@ -156,12 +156,12 @@ class ActiveSheetTest < Test::Unit::TestCase
   def test_reset_column_definition
     assert DefinitionsToBeReset.column_definitions
     assert DefinitionsToBeReset.column_definitions.any?
-    DefinitionsToBeReset.reset_column_definitions
+    DefinitionsToBeReset.send(:reset_column_definitions)
     assert_nil DefinitionsToBeReset.column_definitions
   end
 
   def test_column_discovery
-    ColumnDiscovery.reset_column_definitions
+    ColumnDiscovery.send(:reset_column_definitions)
     ColumnDiscovery.load(fixture('header'))
     coldefs = ColumnDiscovery.column_definitions
     assert_equal 5, coldefs.size

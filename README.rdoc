@@ -72,6 +72,8 @@ By default, all values will be returned as strings which is not that useful.  Yo
 
   end
 
+=== Parsing Contents
+
 === Dealing With Garbage
 
 Most spreadsheets are authored by humans and most of them suck at sticking to conventions.
@@ -110,7 +112,7 @@ You may also find yourself cleaning up cell contents to be able to convert it to
     
   end
   
-=== Skipping Rows
+=== Skipping and Filtering Rows
 
 In addition to <tt>skip_header</tt>, you can also declare when to start/stop processing the file
 
@@ -122,6 +124,26 @@ In addition to <tt>skip_header</tt>, you can also declare when to start/stop pro
     stop_after_row 180
     
   end
+
+You can also define row filtering code both before and after the conversion of the row into an object.
+
+  class TemperatureRecord < ActiveSheet::Base
+    
+    column :place
+    column :temperature, :float
+    
+    # Source row is an array of strings as returned by the parser
+    filter_source_row do |source_row|
+      source_row.empty? || row.first.nil?
+    end
+  
+    # Here the row is an object for which attributes were converted
+    filter_row do |row|
+      row.temperature < 25
+    end
+    
+  end
+  
   
 == MIT License
 
