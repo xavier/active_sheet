@@ -99,7 +99,7 @@ ActiveSheet allows you to customize the definition of a blank cell, people are v
 
   class Person < ActiveSheet::Base
 
-    # Cells containing "xxxxx" or "-" are empty
+    # Treat "N/A" cells as empty
     blank_cell do |s|
       (s.size == 0) || (s == "N/A")
     end
