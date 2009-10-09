@@ -182,6 +182,8 @@ module ActiveSheet
       end
       
       def string_to_column_symbol(s)
+        raise "Cannot discover column names - one of the column names is empty" if s.nil?
+
         if @name_hints && (n = @name_hints[s])
           n
         elsif (s = s.gsub(/[^a-z_0-9]+/i, '_').gsub(/^(\d)/, '_\1')).empty?
