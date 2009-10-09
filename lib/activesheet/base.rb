@@ -189,7 +189,7 @@ module ActiveSheet
         elsif (s = s.gsub(/[^a-z_0-9]+/i, '_').gsub(/^(\d)/, '_\1')).empty?
           raise ColumnDefinitionError.new("Column name may not be blank")
         else
-          s.to_sym
+          s.underscore.to_sym
         end
       end
       
