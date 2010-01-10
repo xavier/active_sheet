@@ -189,8 +189,8 @@ class ActiveSheetTest < Test::Unit::TestCase
     }
     assert_equal :firstname,      ActiveSheet::Base.send(:string_to_column_symbol, "firstname")
     assert_equal :middle_initial, ActiveSheet::Base.send(:string_to_column_symbol, "middle initial")
-    assert_equal :Pr_nom,         ActiveSheet::Base.send(:string_to_column_symbol, "PrÃ©nom")
-    assert_equal :_123_FOUR,      ActiveSheet::Base.send(:string_to_column_symbol, "123-FOUR")
+    assert_equal :pr_nom,         ActiveSheet::Base.send(:string_to_column_symbol, "Prénom")
+    assert_equal :_123_four,      ActiveSheet::Base.send(:string_to_column_symbol, "123-FOUR")
   end
   
   def test_record_initialization_with_autodiscovery
@@ -296,7 +296,7 @@ class ActiveSheetTest < Test::Unit::TestCase
     assert_equal 1, rows.size
     assert_equal "Jane", rows.first.firstname
   end
-  
+    
   protected
   
   def assert_coldef(name, coltype, coldef)

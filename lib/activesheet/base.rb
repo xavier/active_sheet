@@ -1,6 +1,7 @@
 
 module ActiveSheet
-    
+  
+  VERSION = "0.0.2"
   DEFAULT_TARGET_ENCODING = 'UTF-8'  
     
   class Base
@@ -36,7 +37,8 @@ module ActiveSheet
       end
       
       # Use the first row to be processed as column/attribute names
-      # Each column name will be inflected by replacing all non alphanumerical ASCII characters by underscores (and prepending an underscore if the name starts with a number). all columns content will be treated as strings.
+      # Each column name will be inflected by replacing all non alphanumerical ASCII characters by underscores 
+      # (and prepending an underscore if the name starts with a number). all columns content will be treated as strings.
       # If you are not happy with the inflected column names or if you want to define the type of some columns, you can pass some hints.
       # * <tt>"Foo" => :bar</tt> will tell the inflector to use :bar as attribute name for column "Foo"
       # * <tt>"Foo" => [:bar, :integer]</tt> will tell the inflector to use :bar as attribute name for column "Foo" which will be treated as an :integer
@@ -153,10 +155,6 @@ module ActiveSheet
         process(parser.parse(data, options))
       end
       
-      # TODO
-      # def inspect
-      # end
-      
       protected
       
       #
@@ -182,14 +180,13 @@ module ActiveSheet
       end
       
       def string_to_column_symbol(s)
-        raise "Cannot discover column names - one of the column names is empty" if s.nil?
-
+        raise ArgumentError.new("Column name may not be blank -- You may have an empty cell in the header row") if s.nil?
         if @name_hints && (n = @name_hints[s])
           n
         elsif (s = s.gsub(/[^a-z_0-9]+/i, '_').gsub(/^(\d)/, '_\1')).empty?
           raise ColumnDefinitionError.new("Column name may not be blank")
         else
-          s.underscore.to_sym
+          s.downcase.to_sym
         end
       end
       
@@ -273,7 +270,7 @@ module ActiveSheet
         end
         result
       end
-
+      
     end # class << self
     
     # Attribute accessor
